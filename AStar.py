@@ -7,30 +7,6 @@
 import math
 from queue import PriorityQueue
 
-#class Node:
-
-#	def __init__(self, position, parent):
-#		self.g = 0
-#		self.h = 0
-#		self.f = 0
-#		self.list = None
-#		self.position = position
-#		self.parent = parent
-#		self.type = 0
-
-#	def __eq__(self, other):
-#		return self.position == other.position
-
-#	def __lt__(self, other):
-#		return self.f < other.f
-
-#class Grid:
-
-#	def __init__(self, x, y):
-#		self.width = x#surface.get_width()
-#		self.length = y#surface.get_height()
-#		self.grid = {(i, j) : Node((i, j), None) for i in range(0, self.width, 50) for j in range(0, self.length, 50)}
-
 def AStar(start, end, grid):
 
 	start_node = grid.grid[start]
@@ -42,13 +18,13 @@ def AStar(start, end, grid):
 
 	path = []
 
-	while queue:
+	while not queue.empty():
 
 		current_node = queue.get()[1]
 
 		grid.grid[current_node.position].list = False
 
-		directions = [(0, 50), (0, -50), (50, 0), (-50, 0), (-50, -50), (-50, 50), (50, -50), (50, 50)]
+		directions = [(0, grid.interval), (0, -grid.interval), (grid.interval, 0), (-grid.interval, 0), (-grid.interval, -grid.interval), (-grid.interval, grid.interval), (grid.interval, -grid.interval), (grid.interval, grid.interval)]
 
 		for x, y in directions:
 
@@ -75,12 +51,15 @@ def AStar(start, end, grid):
 			child.list = False
 			queue.put((child.f, child))
 			path.append(child.position)
+
 			if child == end_node:
-		#	path = []
-		#	while current_node.parent:
-		#		path.append(current_node.position)
-		#		current_node = current_node.parent
-				return path
+				final_path = []
+				while child.parent:
+					final_path.append(child.position)
+					child = child.parent
+				return path, final_path
+
+	return False, False
 
 if __name__ == "__main__":
 	grid = Grid(800, 800)
